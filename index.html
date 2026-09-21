@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инклюзивті білім беру бойынша педагогтарға арналған тест</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white py-10 px-4 shadow-xl mb-8">
+        <div class="max-w-4xl mx-auto text-center space-y-3">
+            <span class="bg-white/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Педагогтарға арналған біліктілік тесті</span>
+            <h1 class="text-3xl md:text-4xl font-bold">Инклюзивті білім беру бойынша тест (5–11 сыныптар)</h1>
+            <p class="text-indigo-100 text-sm md:text-base max-w-2xl mx-auto">Тест тапсырмаларын орындап, нәтижені онлайн жүйеге жіберу үшін төмендегі деректерді толтырыңыз.</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4">
+        <form id="testForm" class="space-y-8">
+            
+            <!-- User Info Card -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 shadow-md border border-slate-100 space-y-6">
+                <div class="flex items-center space-x-3 border-b pb-4 border-slate-100">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Қатысушы мәліметтері</h2>
+                        <p class="text-xs text-slate-500">Нәтижелерді Google Таблицаға сақтау үшін ақпаратты толтырыңыз</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2" for="fullName">
+                            Аты-жөні (Толық) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="fullName" required placeholder="Мысалы: Ахметов Серік Ержанұлы"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2" for="userGrade">
+                            Сыныбы / Лауазымы <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="userGrade" required placeholder="Мысалы: 7-сынып жетекшісі / Математика пәні мұғалімі"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none text-sm">
+                    </div>
+                </div>
+
+                <!-- Google Web App Script URL Input -->
+                <div class="pt-2">
+                    <label class="block text-xs font-medium text-slate-500 mb-1" for="sheetUrl">
+                        Google Sheet Script URL (Нәтижелерді жинайтын сілтеме)
+                    </label>
+                    <input type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-600 focus:ring-1 focus:ring-indigo-500 outline-none">
+                    <p class="text-[11px] text-slate-400 mt-1">* Google Apps Script арқылы алынған Web App URL сілтемесін қойсаңыз, нәтиже автоматты түрде кестеге түседі.</p>
+                </div>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Dynamically populated via JS -->
+            </div>
+
+            <!-- Submit Button -->
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-sm text-slate-600 text-center sm:text-left">
+                    Барлық 40 сұраққа жауап бергеніңізге көз жеткізіңіз.
+                </div>
+                <button type="button" onclick="submitTest()" 
+                    class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transform active:scale-95 transition duration-200 flex items-center justify-center space-x-3">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Нәтижені Google Таблицаға жіберу</span>
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Result Modal/Card -->
+        <div id="resultCard" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl text-center space-y-6 animate-fade-in">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800">Тест аяқталды!</h3>
+                    <p class="text-slate-500 text-sm mt-1" id="resultUserText"></p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                    <div class="text-4xl font-extrabold text-indigo-600" id="scoreText">0 / 40</div>
+                    <div class="text-xs text-slate-500 font-medium uppercase tracking-wider mt-1" id="percentText">0% Дұрыс жауап</div>
+                </div>
+
+                <div id="statusMessage" class="text-xs p-3 rounded-xl bg-slate-100 text-slate-600"></div>
+
+                <button onclick="closeModal()" class="w-full py-3 bg-slate-800 text-white font-medium rounded-xl hover:bg-slate-900 transition">
+                    Жабу
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const questionsData = [
+            { id: 1, grade: 5, topic: "Инклюзия негіздері", q: "Инклюзивті білім берудің басты философиясы қандай?", a: "Барлық оқушылардың тең құқылы білім алуы", b: "Арнайы орталықтарда бөлек оқыту", c: "Тек дарынды балаларды қолдау", d: "Үйде оқыту жүйесін кеңейту", correct: "A" },
+            { id: 2, grade: 5, topic: "Психолого-педагогикалық қолдау", q: "Ерекше білім беру қажеттіліктері (ЕБҚО) бар оқушыға жасалатын СИП (ЖОБ) деген не?", a: "Семестрлік педагогикалық жоспар", b: "Жеке білім беру бағдарламасы", c: "Стандартты оқыту бағдарламасы", d: "Әлеуметтік бейімдеу парағы", correct: "B" },
+            { id: 3, grade: 5, topic: "Оқу ортасы", q: "5-сыныпта көру қабілеті төмен оқушы үшін сынып бөлмесінде қандай жағдай жасалуы керек?", a: "Ең артқы партаға отырғызу", b: "Жарық жақсы түсетін алдыңғы партаға отырғызу", c: "Басқа балалардан бөлек отырғызу", d: "Терезесі жоқ бұрышқа отырғызу", correct: "B" },
+            { id: 4, grade: 5, topic: "Сөйлеу бұзылыстары", q: "Дислалиясы бар 5-сынып оқушысымен жұмыста мұғалімнің қай әрекеті дұрыс?", a: "Сынып алдында дауыстап оқытудан бас тартпау", b: "Сөйлеу қателіктерін сынып алдында үнемі түзету", c: "Сабырлық танытып, сөзін бөлмей аяғына дейін тыңдау", d: "Ауызша жауаптарды мүлдем талап етпеу", correct: "C" },
+            { id: 5, grade: 5, topic: "Әлеуметтендіру", q: "Сыныпта ЕБҚО бар оқушыны буллингтен қорғау үшін мұғалім не істеуі керек?", a: "Мәселеге араласпай, баланың өзі шешуін күту", b: "Сыныпта толеранттылық пен өзара құрмет мәдениетін қалыптастыру", c: "Оқушыны басқа мектепке ауыстыруға кеңес беру", d: "ЕБҚО бар оқушыны үзіліске шығармау", correct: "B" },
+            { id: 6, grade: 5, topic: "Заңнама", q: "Қазақстан Республикасында инклюзивті білім беру қай заңмен реттеледі?", a: "Еңбек кодексімен", b: "«Білім туралы» ҚР Заңымен", c: "Салық кодексімен", d: "Азаматтық кодекспен", correct: "B" },
+            { id: 7, grade: 6, topic: "Танымдық процестер", q: "Есінде сақтау қабілеті төмен 6-сынып оқушысына материалды түсіндірудің ең тиімді жолы қандай?", a: "Тек ұзақ мәтінді оқыту", b: "Визуалды көрнекіліктер мен схемаларды қолдану", c: "Материалды тек ауызша қайталау", d: "Жылдам темппен лекция оқу", correct: "B" },
+            { id: 8, grade: 6, topic: "Тірек-қимыл аппараты", q: "Тірек-қимыл аппараты бұзылған 6-сынып оқушысы үшін мектепте не қамтамасыз етілуі тиіс?", a: "Тек жеделсаты (лифт)", b: "Пандустар, кең есіктер мен кедергісіз орта", c: "Тек арнайы спорт залы", d: "Жеке кіретін есік", correct: "B" },
+            { id: 9, grade: 6, topic: "Мұғалім мен ассистент", q: "Педагог-ассистенттің негізгі міндетіне не кіреді?", a: "Мұғалімнің орнына сабақ өту", b: "Оқушыға оқу үдерісінде және мінез-құлқын реттеуде көмектесу", c: "Баға қою", d: "Оқушының үй тапсырмасын орындап беру", correct: "B" },
+            { id: 10, grade: 6, topic: "Психологиялық бейімдеу", q: "Зейін тапшылығы және гиперактивтілігі (ЗТГБ) бар оқушыға тапсырманы қалай берген жөн?", a: "Бір уақытта көп деңгейлі тапсырма ұсыну", b: "Тапсырмаларды қысқа, анық қадамдарға бөліп беру", c: "Мәтінді өздігінен оқуға қалдыру", d: "Тапсырманы тек жазбаша беру", correct: "B" },
+            { id: 11, grade: 6, topic: "Оқытуды саралау", q: "Оқытуды дифференциациялау (саралау) дегеніміз не?", a: "Барлық оқушыға бірдей тапсырма беру", b: "Оқушылардың қажеттілігі мен мүмкіндігіне қарай тапсырмаларды бейімдеу", c: "Нашар оқитындарды сабақтан босату", d: "Тек дарынды оқушыларға көңіл бөлу", correct: "B" },
+            { id: 12, grade: 6, topic: "ПМПК (ППМК)", q: "Психологиялық-медициналық-педагогикалық консультацияның (ПМПК) негізгі функциясы қандай?", a: "Балаға медициналық диагноз қойып, емдеу", b: "Баланың білім алу қажеттіліктерін анықтау және ұсынымдар беру", c: "Балаларды мектепке қабылдаудан бас тарту", d: "Мектеп мұғалімдерін аттестациядан өткізу", correct: "B" },
+            { id: 13, grade: 7, topic: "Естіу бұзылыстары", q: "Нашар еститін 7-сынып оқушысымен қарым-қатынас жасағанда мұғалім не істеуі керек?", a: "Тері қарап сөйлеу", b: "Бет-әлпетін ашық ұстап, анық және асықпай сөйлеу", c: "Өте қатты айқайлап сөйлеу", d: "Тек жазбаша тілді қолдану", correct: "B" },
+            { id: 14, grade: 7, topic: "Адаптация", q: "Оқу материалын бейімдеудің (модификация) мақсаты не?", a: "Бағдарламаны мүлдем жою", b: "Оқушының мүмкіндігіне сәйкес күрделілік деңгейін реттеу", c: "Тапсырма көлемін екі есе арттыру", d: "Мемлекеттік стандартты өгеріссіз қалдыру", correct: "B" },
+            { id: 15, grade: 7, topic: "Жас ерекшелік психологиясы", q: "7-сыныптағы ЕБҚО бар жасөспірімнің сенсорлық жүктемесі асып кеткенде не істеген жөн?", a: "Тәртіптік шара қолдану", b: "Тыншығу үшін арнайы сенсорлық аймаққа немесе тыныш жерге мүмкіндік беру", c: "Ескерту жасап, тақтаға шығару", d: "Сыныптастарына оны күлуге рұқсат ету", correct: "B" },
+            { id: 16, grade: 7, topic: "Бағалау жүйесі", q: "Инклюзивті сыныпта ЕБҚО бар оқушыны бағалауда қандай принцип қолданылады?", a: "Стандартты нормативтерге ғана сүйену", b: "Оқушының өзіндік илгеруі мен жеке прогресін бағалау", c: "Басқа үздік оқушылармен салыстыру", d: "Тек «3» деген баға қою", correct: "B" },
+            { id: 17, grade: 7, topic: "Аутизм спектрі (АСБ)", q: "АСБ бар 7-сынып оқушысы үшін сабақ кестесіндегі кенеттен болған өзгеріс неге әкелуі мүмкін?", a: "Тез қуануға", b: "Күйзеліс пен мазасыздануға", c: "Сабақ үлгерімінің артуына", d: "Ешқандай әсер етпейді", correct: "B" },
+            { id: 18, grade: 7, topic: "Вiріктіріп оқыту", q: "Коррекциялық қолдау бөлмесінің (ресурс кабинеті) мақсаты неде?", a: "Балаларды оқшаулап оқыту", b: "Арнайы мамандардың (логопед, дефектолог) қосымша көмегін ұйымдастыру", c: "Демалыс орны ретінде ғана пайдалану", d: "Тек ата-аналарға кеңес беру", correct: "B" },
+            { id: 19, grade: 8, topic: "Оқыту әдістемесі", q: "8-сыныпта ДЦП бар оқушыға жазу тапсырмасын орындауды жеңілдету үшін не ұсынуға болады?", a: "Жазу тапсырмаларын толық алып тастау", b: "Компьютерді/цифрлық құралдарды пайдалануға рұқсат беру", c: "Басқа балалар сияқты жылдам жазуды талап ету", d: "Тек ауызша емтихан тапсыру", correct: "B" },
+            { id: 20, grade: 8, topic: "Оқу мінез-құлқы", q: "Дисграфиясы бар 8-сынып оқушысының диктант жазуында қандай ерекшелік байқалады?", a: "Математикалық есептерді шығара алмау", b: "Тілдік емес, өзіндік спецификалық әріптік қателіктер жіберу", c: "Қозғалыс координациясының жоғалуы", d: "Көру қабілетінің нашарлауы", correct: "B" },
+            { id: 21, grade: 8, topic: "Топтық жұмыс", q: "Инклюзивті сыныпта топтық жұмысты ұйымдастырғанда мұғалімнің ұстанымы қандай болуы керек?", a: "ЕБҚО бар оқушыны топқа қоспау", b: "Оқушының күшті жақтарын ескере отырып, рөлін дұрыс бөлу", c: "Тапсырманы тек ЕБҚО бар оқушыға жүктеу", d: "Топ құрамын оқушылардың өздеріне шешуге қалдыру", correct: "B" },
+            { id: 22, grade: 8, topic: "Психологиялық қолдау", q: "Дискалькулиясы бар оқушыға алгебра сабағында қандай көмек көрсетіледі?", a: "Формулалар мен калькуляторды қолдануға рұқсат беру", b: "Тақтада есеп шығаруды міндеттеу", c: "Математика сабағынан босату", d: "Тек теориялық сұрақтар қою", correct: "A" },
+            { id: 23, grade: 8, topic: "Әлеуметтік орта", q: "8-сыныптағы жасөспірімдер арасында инклюзивті ортаны дамыту үшін қай шара тиімді?", a: "Бөлек іс-шаралар өткізу", b: "Бірлескен жобалар мен сыныптан тыс әлеуметтік шаралар ұйымдастыру", c: "Тек академиялық жарыстар өткізу", d: "Бақылауды қатаңдату", correct: "B" },
+            { id: 24, grade: 8, topic: "Психология", q: "Дислексиясы бар оқушыға мәтінмен жұмыс істеуде қандай амал қолайлы?", a: "Ұзақ мәтінді жылдам оқыту", b: "Аудиокітаптарды және шрифт көлемі үлкен мәтіндерді қолдану", c: "Мәтінді жатқа айтқызу", d: "Кедергісіз, жылдам оқуды талап ету", correct: "B" },
+            { id: 25, grade: 9, topic: "Кәсіби бағдар", q: "9-сыныптағы ЕБҚО бар оқушылар үшін кәсіби бағдар берудің басты мақсаты не?", a: "Барлық балаға бірдей кәсіп таңдату", b: "Олардың мүмкіндігі мен қызығушылығына сай кәсіби траекториясын анықтау", c: "Оқуды аяқтауға тыйым салу", d: "Тек арнайы колледждерге бағыттау", correct: "B" },
+            { id: 26, grade: 9, topic: "Оқыту стратегиясы", q: "\"Universal Design for Learning\" (Білім берудің әмбебап дизайны) қағидаты нені білдіреді?", a: "Білім беруді тек бірңғай стандартта ұсыну", b: "Барлық оқушыға қолжетімді, икемді оқыту ортасы мен әдістерін жасау", c: "Тек мүмкіндігі шектеулі жандарға арналған ғимарат соғу", d: "Мектеп формасын бірдей ету", correct: "B" },
+            { id: 27, grade: 9, topic: "Тәрбие жұмысы", q: "9-сынып оқушысы ЕБҚО бар сыныптасына агрессия көрсетсе, мұғалімнің алғашқы қадамы:", a: "Жағдайды елеусіз қалдыру", b: "Агрессияны тоқтатып, екі тараппен де психологиялық әңгіме жүргізу", c: "Агрессорды мектептен шығару", d: "Басқа оқушыларға шағымдану", correct: "B" },
+            { id: 28, grade: 9, topic: "Емтихан жағдайы", q: "9-сыныптың қорытынды аттестациясында ЕБҚО бар оқушылар үшін қандай жеңілдіктер беріледі?", a: "Емтиханнан толық босату", b: "Қосымша уақыт бөлу және ассистивті құралдарды пайдалану", c: "Дайын жауаптарды беріп қою", d: "Бағаны автоматты түрде \"5\" ету", correct: "B" },
+            { id: 29, grade: 9, topic: "Психофизиология", q: "Эпилепсиясы бар 9-сынып оқушысы сабақ үстінде талып қалса, мұғалімнің бірінші әрекеті:", a: "Аузына қатты зат салу", b: "Оқушыны қауіпсіз жатқызып, басын қорғау және жедел жәрдем шақыру", c: "Басын сумен жуу", d: "Тік тұрғызуға тырысу", correct: "B" },
+            { id: 30, grade: 9, topic: "Ата-аналармен жұмыс", q: "ЕБҚО бар оқушының ата-анасымен тиімді серіктестік орнатудың жолы:", a: "Тек баланың кемшіліктерін хабарлау", b: "Баланың жетістіктері мен даму жоспарын жүйелі түрде талқылау", c: "Ата-ананы мектеп өмірінен алшақтату", d: "Барлық жауапкершілікті ата-анаға жүктеу", correct: "B" },
+            { id: 31, grade: 10, topic: "Жоғары сынып инклюзиясы", q: "10-сыныпта көру бұзылысы бар оқушыға күрделі материалды ұсынудың ең жақсы жолы:", a: "Брайль шрифті немесе экрандық оқу бағдарламаларын (NVDA/JAWS) қолдану", b: "Материалды оқымай-ақ қоюға рұқсат ету", c: "Материалды сурет түрінде ұсыну", d: "Тек сыныптастарының оқып беруін талап ету", correct: "A" },
+            { id: 32, grade: 10, topic: "Инклюзивті мәдениет", q: "Мектепте инклюзивті мәдениетті қалыптастырудың белгісі қандай?", a: "ЕБҚО бар балаларды жеке бөлмеде ұстау", b: "Әрбір оқушының әртүрлілігін құндылық ретінде қабылдау", c: "Барлық оқушыдан бірдей жоғары академиялық нәтиже талап ету", d: "Мектепте тек физикалық жағдай жасау", correct: "B" },
+            { id: 33, grade: 10, topic: "Оқытуды жекелеу", q: "10-сынып оқушысына арналған ИУП (Жеке оқу жоспары) кімнің қатысуымен бекітіледі?", a: "Тек сынып жетекшісімен", b: "Мектептің психологиялық-педагогикалық консилиумы және ата-ана қатысуымен", c: "Тек мектеп директорының шешімімен", d: "Оқушының өзімен ғана", correct: "B" },
+            { id: 34, grade: 10, topic: "Соматикалық аурулар", q: "Созылмалы соматикалық ауруы бар 10-сынып оқушысына сабақта қандай жағдай жасалады?", a: "Жүктемені дозалау және сергіту үзілістерін беру", b: "Дене шынықтыру сабағына мәжбүрлеп қатыстыру", c: "Үй тапсырмасын арттыру", d: "Мектепке келуін тоқтату", correct: "A" },
+            { id: 35, grade: 10, topic: "Интерактивті технология", q: "10-сыныпта инклюзивті білім беруде цифрлық ресурстарды қолданудың пайдасы:", a: "Балалардың қарым-қатынасын азайту", b: "Интерактивтілік пен ақпаратқа қолжетімділікті арттыру", c: "Оқулықтардан мүлдем бас тарту", d: "Мұғалімнің рөлін жою", correct: "B" },
+            { id: 36, grade: 11, topic: "ҰБТ және жоғары білім", q: "11-сыныпты аяқтайтын ЕБҚО бар оқушылар үшін ҰБТ тапсыруда қандай жағдай жасалған?", a: "ҰБТ-дан толық босатылады", b: "Қосымша 40 минут уақыт, ассистент және жеке аудитория ұсынылуы мүмкін", c: "Тест сұрақтары 10-ға дейін азайтылады", d: "Бағалары өздігінен екі есеге көбейтіледі", correct: "B" },
+            { id: 37, grade: 11, topic: "Әлеуметтік бейімделу", q: "11-сынып оқушысының мектептен кейінгі өмірге дайындығын не қамтамасыз етеді?", a: "Тек академикалық білім", b: "Дербестік, әлеуметтік және тұрмыстық дағдыларды (Life Skills) меңгеру", c: "Мектепте тағы бір жылға қалу", d: "Тек ата-анасының қамқорлығы", correct: "B" },
+            { id: 38, grade: 11, topic: "Мониторинг", q: "ЕБҚО бар 11-сынып оқушысының оқудағы прогресін бағалаудың ең әділ әдісі:", a: "Портфолио арқылы динамиканы қадағалау", b: "Тек стандартты бақылау жұмыстары", c: "Өзгеріссіз емтихан тесттері", d: "Сынып орташа балына қарау", correct: "A" },
+            { id: 39, grade: 11, topic: "Педагогикалық этика", q: "Инклюзивті сыныпта сабақ беретін 11-сынып мұғалімінің кәсіби ұстанымы қандай болуы тиіс?", a: "«Ерекше» оқушыға аяушылықпен қарау", b: "Әрбір оқушының әлеуетіне сену және тең мүмкіндік беру", c: "Тек үздік оқушылардың көрсеткішіне жұмыс істеу", d: "Дамуында ауытқуы бар оқушыларды бөлектеу", correct: "B" },
+            { id: 40, grade: 11, topic: "Әдістемелік шеберлік", q: "Мұғалім инклюзивті білім беру бойынша кәсіби құзыреттілігін қалай арттырады?", a: "Кәсіби біліктілік курстарынан өту және деструктивті стереотиптерден арылу", b: "Тек бұрынғы дәстүрлі сабақ беру әдісін сақтау", c: "ЕБҚО бар балалармен жұмыстан бас тарту", d: "Тек теориялық әдебиеттерді оқумен шектелу", correct: "A" }
+        ];
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = questionsData.map((item, index) => `
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-600">
+                            ${item.grade}-сынып | ${item.topic}
+                        </span>
+                        <span class="text-xs text-slate-400 font-medium">Сұрақ #${index + 1}</span>
+                    </div>
+                    <p class="text-slate-800 font-medium text-base">${item.q}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                        ${['A', 'B', 'C', 'D'].map(option => `
+                            <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                                <input type="radio" name="q${item.id}" value="${option}" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-slate-700"><strong>${option})</strong>${item[option.toLowerCase()]}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function submitTest() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const userGrade = document.getElementById('userGrade').value.trim();
+            const sheetUrl = document.getElementById('sheetUrl').value.trim();
+
+            if (!fullName || !userGrade) {
+                alert('Өтініш, аты-жөніңізді және сыныпты/лауазымды толтырыңыз!');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            let correctCount = 0;
+            questionsData.forEach(q => {
+                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+                if (selected && selected.value === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const percent = Math.round((correctCount / questionsData.length) * 100);
+
+            // UI update
+            document.getElementById('resultUserText').innerText = `${fullName} (${userGrade})`;
+            document.getElementById('scoreText').innerText = `${correctCount} / ${questionsData.length}`;
+            document.getElementById('percentText').innerText = `${percent}% Дұрыс жауап`;
+            document.getElementById('resultCard').classList.remove('hidden');
+
+            const statusEl = document.getElementById('statusMessage');
+
+            // Send to Google Sheet if Web App URL exists
+            if (sheetUrl) {
+                statusEl.innerText = "Нәтиже Google Таблицаға жіберілуде...";
+                try {
+                    await fetch(sheetUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fullName: fullName,
+                            grade: userGrade,
+                            score: `${correctCount}/${questionsData.length}`,
+                            percent: `${percent}%`,
+                            date: new Date().toLocaleString('kk-KZ')
+                        })
+                    });
+                    statusEl.innerText = "✅ Нәтиже Google Таблицаға сәтті сақталды!";
+                    statusEl.className = "text-xs p-3 rounded-xl bg-emerald-50 text-emerald-700 font-medium";
+                } catch (e) {
+                    statusEl.innerText = "⚠️ Кестеге жіберу кезінде қате орын алды.";
+                    statusEl.className = "text-xs p-3 rounded-xl bg-amber-50 text-amber-700 font-medium";
+                }
+            } else {
+                statusEl.innerText = "ℹ️ Google Sheet URL енгізілмеді, нәтиже тек экранда көрсетілді.";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('resultCard').classList.add('hidden');
+        }
+
+        // Initialize Test
+        renderQuestions();
+    </script>
+</body>
+</html>
+```eof
